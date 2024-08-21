@@ -1,6 +1,6 @@
 import exp = require("constants");
 import { AppDataSource } from "./data-source";
-import { User } from "./entity/User";
+import { Client } from "./entity/Client";
 import * as express from "express"; //framework para API
 
 // server.js
