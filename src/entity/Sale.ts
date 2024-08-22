@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { Car } from "./Car";
 import { Client } from "./Client";
 
@@ -29,6 +29,13 @@ export class Sale {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   date: Date;
 
+  @BeforeInsert()
+  @BeforeUpdate()
+  validatePrice() {
+      if (this.price < 0) {
+          throw new Error('Invalid Price: Must be non-negative.');
+      }
+  }
   constructor(id: number, client: Client, car: Car, value: number){
     this.id = id;
     this.client = client;

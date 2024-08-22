@@ -14,13 +14,22 @@ export async function getAllClients(client_table: Repository<Client>): Promise<C
   return await client_table.find()
 }
 
-export async function getClient(CPF: string, client_table: Repository<Client>): Promise<Client[]>{
-  return await client_table.findBy({CPF: CPF})
+export async function getClient(CPF: string, client_table: Repository<Client>): Promise<Client>{
+  if (isCPFValid(CPF)) {
+    return await client_table.findOneBy({ CPF: CPF });
+  }
+  return;
 }
 
-export async function removeClient(CPF: string, client_table: Repository<Client>): Promise<void>{
-  const client = await getClient(CPF, client_table);
+export async function removeClient(client: Client, client_table: Repository<Client>): Promise<void>{
   await client_table.remove(client)
+}
+
+export async function removeClientCPF(CPF: string, client_table: Repository<Client>): Promise<void> {
+  if (isCPFValid(CPF)) {
+    const client = await getClient(CPF, client_table);
+    await client_table.remove(client)
+  }
 }
 
 function isCPFValid(CPF: string): boolean{

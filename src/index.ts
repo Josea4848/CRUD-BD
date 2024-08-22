@@ -21,24 +21,6 @@ AppDataSource.initialize()
     const car_table = AppDataSource.getRepository(Car);
     const sale_table = AppDataSource.getRepository(Sale);
 
-    // a tabela sale talvez n funcione
-    // se n funcionar, roda isso abaixo:
-    //
-    // const s = new Sale()
-    // AppDataSource.manager.save(s)
-
-    //----------- addCar(year, model, brand, km, service, table)
-    //const car = await addCar(2020, "camaro", "chevrolet", 0, car_table);
-
-    //------------ addClient(CPF, first_name, last_name, birthdate, table)
-    //const client = await addClient("02244889617", "jose", "duel", new Date("2022-10-9"), client_table)
-
-    //------------ addSale(client, car, price, table)
-    //const sale = await addSale( client.CPF, i, 1111.20, client_table, car_table,sale_table);
-    //console.log(await getClientSales(client, sale_table))
-
-    //---------- printing -----------
-    //Endpoints
 
     //GET
     app.get("/cars", async (req, res) => {
