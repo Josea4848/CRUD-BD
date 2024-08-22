@@ -6,6 +6,8 @@ import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
 import { getAllCars } from "./methods/car_methods";
 import * as cors from "cors";
+import { addSaleIdCPF } from "./methods/sale_methods";
+import { addClient, getClient } from "./methods/client_methods";
 
 // server.js
 const express = require("express");
@@ -15,7 +17,7 @@ const port: number = 8080;
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.use(cors);
+app.use(cors());
 
 AppDataSource.initialize()
   .then(async () => {
@@ -23,6 +25,14 @@ AppDataSource.initialize()
     const client_table = AppDataSource.getRepository(Client);
     const car_table = AppDataSource.getRepository(Car);
     const sale_table = AppDataSource.getRepository(Sale);
+
+    addClient(
+      "44011199920",
+      "Duel",
+      "Hugo",
+      new Date("2000-02-08"),
+      client_table
+    );
 
     //GET
     app.get("/cars", async (req, res) => {
@@ -48,13 +58,21 @@ AppDataSource.initialize()
     app.post("/sell/:id", async (req, res) => {
       //INSERT
       try {
-        //nothing
       } catch (error) {
         return res.status(500).send(error.message);
       }
     });
-    app.put("/sell/:id", async (req, res) => {
+
+    //Clients
+    app.get("/clients/:id", async (req, res) => {
       try {
+        const client = await getClient(req.params.id, client_table);
+        let is_client = true;
+
+        if (client == null) {
+          is_client = false;
+        }
+        return res.status(200).json({ isClient: is_client });
       } catch (error) {
         return res.status(500).send(error.message);
       }
