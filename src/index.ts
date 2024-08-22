@@ -1,9 +1,12 @@
 import exp = require("constants");
-import { AppDataSource } from "./data-source";
-import { Client } from "./entity/Client";
-import { Car, Service } from "./entity/Car";
 import * as express from "express"; //framework para API
+import { AppDataSource } from "./data-source";
+import { Car, Service } from "./entity/Car";
+import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
+import { addCar, getCars } from "./methods/car_methods";
+import { addClient, getClients } from "./methods/client_methods";
+import { addSale, getSales } from "./methods/sale_methods";
 
 // server.js
 const express = require("express");
@@ -16,41 +19,31 @@ app.use(express.static("public"));
 
 AppDataSource.initialize()
   .then(async () => {
-    // console.log("Inserting a new user into the database...");
-    // const user = new User();
-    // user.firstName = "Timber";
-    // user.lastName = "Saw";
-    // user.age = 25;
-    // await AppDataSource.manager.save(user);
-    // console.log("Saved a new user with id: " + user.id);
 
-    // console.log("Loading users from the database...");
-    // const users = await AppDataSource.manager.find(User);
-    // console.log("Loaded users: ", users);
-    const client = new Client();
-    client.CPF = "71566849497";
-    client.first_name = "José";
-    client.last_name = "Neto";
-    client.age = 20;
+    //------------- getting tables ---------------
+    const car_table = AppDataSource.getRepository(Car);
+    const client_table = AppDataSource.getRepository(Client);
+    const sale_table = AppDataSource.getRepository(Sale);
 
-    const car = new Car();
-    car.brand = "Ford";
-    car.model = "Mustang fastback";
-    car.year = 1969;
-    car.km = 999;
-    car.service = 1;
+    // a tabela sale talvez n funcione
+    // se n funcionar, roda isso abaixo:
+    //
+    // const s = new Sale()
+    // AppDataSource.manager.save(s)
 
-    await AppDataSource.manager.save(car);
+    //--------- addCar(year, model, brand, km, service, table)
+    const car = addCar(2020, "camaro", "chevrolet", 0, Service.RENT, car_table);
 
-    const clients = await AppDataSource.manager.find(Car);
-    console.log(`Clients loaded: ${clients}`);
+    //------------ addClient(CPF, first_name, last_name, birthdate, table)
+    const client = addClient("02248869401", "samuel", "sla", new Date('2004-06-04'), client_table)
 
-    //await AppDataSource.manager.save(car);
+    //---------- addSale(client, car, price, table)
+    const sale = addSale(await client, await car, 9999.10, sale_table);
 
-    console.log(
-      "Here you can setup and run express / fastify / any other framework."
-    );
-
+    //---------- printing -----------
+    console.log(await getCars(car_table))
+    console.log(await getClients(client_table))
+    console.log(await getSales(sale_table))
     //Endpoints
 
     //GET

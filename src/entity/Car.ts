@@ -1,13 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 export enum Service {
-  Rent = 0,
-  Sale = 1,
+  RENT = 0,
+  SALE = 1,
 }
 
 @Entity()
 export class Car {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({
@@ -19,12 +19,14 @@ export class Car {
   @Column({
     type: "varchar",
     length: 30,
+    nullable: false
   })
   model: string;
 
   @Column({
     type: "varchar",
     length: 30,
+    nullable: false
   })
   brand: string;
 
@@ -37,6 +39,27 @@ export class Car {
   @Column({
     type: "enum",
     enum: Service,
+    nullable: false
   })
   service: Service;
+
+  @Column({
+    type: "boolean",
+    default: false
+  })
+  on_service: boolean;
+
+  constructor(
+    year: number,
+    model: string,
+    brand: string,
+    km: number,
+    service: Service,
+  ) {
+    this.model = model;
+    this.brand = brand;
+    this.year = year;
+    this.km = km;
+    this.service = service;
+  }
 }
