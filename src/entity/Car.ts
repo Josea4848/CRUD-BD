@@ -1,9 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-export enum Service {
-  RENT = 0,
-  SALE = 1,
-}
 
 @Entity()
 export class Car {
@@ -37,29 +33,20 @@ export class Car {
   km: number;
 
   @Column({
-    type: "enum",
-    enum: Service,
-    nullable: false
-  })
-  service: Service;
-
-  @Column({
     type: "boolean",
     default: false
   })
-  on_service: boolean;
+  sold: boolean;
 
   constructor(
     year: number,
     model: string,
     brand: string,
-    km: number,
-    service: Service,
+    km: number
   ) {
     this.model = model;
     this.brand = brand;
     this.year = year;
     this.km = km;
-    this.service = service;
   }
 }

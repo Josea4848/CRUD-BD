@@ -1,13 +1,9 @@
 import exp = require("constants");
 import * as express from "express"; //framework para API
 import { AppDataSource } from "./data-source";
-import { Car, Service } from "./entity/Car";
+import { Car } from "./entity/Car";
 import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
-import { addCar, getCars } from "./methods/car_methods";
-import { addClient, getClients } from "./methods/client_methods";
-import { addSale, getSales } from "./methods/sale_methods";
-
 // server.js
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -21,8 +17,8 @@ AppDataSource.initialize()
   .then(async () => {
 
     //------------- getting tables ---------------
+    const client_table = AppDataSource.getRepository(Client)
     const car_table = AppDataSource.getRepository(Car);
-    const client_table = AppDataSource.getRepository(Client);
     const sale_table = AppDataSource.getRepository(Sale);
 
     // a tabela sale talvez n funcione
@@ -31,23 +27,21 @@ AppDataSource.initialize()
     // const s = new Sale()
     // AppDataSource.manager.save(s)
 
-    //--------- addCar(year, model, brand, km, service, table)
-    const car = addCar(2020, "camaro", "chevrolet", 0, Service.RENT, car_table);
+    //----------- addCar(year, model, brand, km, service, table)
+    //const car = await addCar(2020, "camaro", "chevrolet", 0, car_table);
 
     //------------ addClient(CPF, first_name, last_name, birthdate, table)
-    const client = addClient("02248869401", "samuel", "sla", new Date('2004-06-04'), client_table)
+    //const client = await addClient("02244889617", "jose", "duel", new Date("2022-10-9"), client_table)
 
-    //---------- addSale(client, car, price, table)
-    const sale = addSale(await client, await car, 9999.10, sale_table);
+    //------------ addSale(client, car, price, table)
+    //const sale = await addSale( client.CPF, i, 1111.20, client_table, car_table,sale_table);
+    //console.log(await getClientSales(client, sale_table))
 
     //---------- printing -----------
-    console.log(await getCars(car_table))
-    console.log(await getClients(client_table))
-    console.log(await getSales(sale_table))
     //Endpoints
 
     //GET
-    app.get("/users", async (req, res) => {
+    app.get("/cars", async (req, res) => {
       try {
         return res.status(200).send("<h1>Olá, mundo</h1>");
       } catch (error) {
@@ -56,7 +50,7 @@ AppDataSource.initialize()
     });
 
     //POST
-    app.post("/users", async (req, res) => {
+    app.post("/cars", async (req, res) => {
       try {
         const data = await req.body;
         console.log(`Data: ${JSON.stringify(data)}`);
@@ -65,6 +59,23 @@ AppDataSource.initialize()
         return res.status(500).send(error.message);
       }
     });
+
+    //SELL CAR BY ID -> INSERT INTO SALE TABLE AND UPDATE CAR STATUS
+    app.post("/sell/:id", async (req, res) => { //INSERT
+      try{
+        //nothing
+      } catch (error) {
+        return res.status(500).send(error.message);
+      }
+    })
+    app.put("/sell/:id", async (req, res) => {
+      try {
+
+      } catch (error){
+        return res.status(500).send(error.message);
+      }
+    })
+
 
     app.listen(port, () => {
       console.log(`Rodando na porta ${port}.`);

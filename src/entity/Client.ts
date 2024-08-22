@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm"
-
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm"
+import { Sale } from "./Sale"
 @Entity()
 export class Client {
 
@@ -30,6 +30,9 @@ export class Client {
       nullable: false
     })
     birthdate: Date
+
+    @OneToMany(type => Sale, sale => sale.client)
+    sales: Sale[];
 
     constructor(CPF: string, first_name: string, last_name: string, birthdate: Date){
       this.CPF = CPF;
