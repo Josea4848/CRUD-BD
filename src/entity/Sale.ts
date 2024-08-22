@@ -11,11 +11,11 @@ export class Sale {
   })
   id: number
 
-  @OneToOne(type => Car, car => car.id, {onDelete: "RESTRICT"})
+  @OneToOne(type => Car, car => car.id, {nullable: false, onDelete: "RESTRICT"})
   @JoinColumn()
   car: Car
 
-  @ManyToOne(type => Client, client => client.CPF,{onDelete: "CASCADE"})
+  @ManyToOne(type => Client, client => client.CPF,{nullable: false, onDelete: "CASCADE"})
   @JoinColumn()
   client: Client
 
@@ -26,8 +26,11 @@ export class Sale {
   })
   price: number
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  date: Date;
+  @Column({ type: 'date', default: () => 'CURRENT_DATE' })
+  date: string;
+
+  @Column({ type: 'time', default: () => 'CURRENT_TIME' })
+  time: string;
 
   @BeforeInsert()
   @BeforeUpdate()

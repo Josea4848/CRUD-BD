@@ -1,5 +1,5 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Sale } from "./Sale";
 
 @Entity()
 export class Car {
@@ -37,6 +37,9 @@ export class Car {
     default: false
   })
   sold: boolean;
+
+  @OneToOne(type => Sale, sale => sale.car)
+  sale: Sale
 
   @BeforeInsert()
   @BeforeUpdate()

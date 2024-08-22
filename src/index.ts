@@ -26,6 +26,7 @@ AppDataSource.initialize()
     const car_table = AppDataSource.getRepository(Car);
     const sale_table = AppDataSource.getRepository(Sale);
 
+<<<<<<< HEAD
     addClient(
       "44011199920",
       "Duel",
@@ -34,6 +35,8 @@ AppDataSource.initialize()
       client_table
     );
 
+=======
+>>>>>>> da51bc5 (date to string)
     //GET
     app.get("/cars", async (req, res) => {
       try {

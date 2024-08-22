@@ -5,7 +5,8 @@ import { Sale } from "../entity/Sale";
 import { getCar } from "./car_methods";
 import { getClient } from "./client_methods";
 
-export async function addSale( client: Client, car: Car, value: number, client_table: Repository<Client>, car_table: Repository<Car>, sale_table: Repository<Sale>): Promise<Sale> {
+//----------------------------------------- CREATE ---------------------------------------------
+export async function addSale( client: Client, car: Car, value: number, car_table: Repository<Car>, sale_table: Repository<Sale>): Promise<Sale> {
   const sale = new Sale(car.id, client, car, value)
 
   await sale_table.save(sale)
@@ -29,6 +30,7 @@ export async function addSaleIdCPF( client_CPF: string, car_id:number, value: nu
   return sale;
 }
 
+//------------------------------------------ READ ---------------------------------------------
 export async function getAllSales(sale_table: Repository<Sale>): Promise<Sale[]> {
   return await sale_table.find();
 }
@@ -41,6 +43,11 @@ export async function getClientSales(client: Client, sale_table: Repository<Sale
   return await sale_table.findBy({ client: client })
 }
 
+export async function getSalesDate(date: string, sale_table: Repository<Sale>): Promise<Sale[]>{
+return await sale_table.findBy({date: date})
+}
+
+//--------------------------------------- DELETE ---------------------------------------------
 export async function removeSale(sale: Sale, sale_table: Repository<Sale>): Promise<void> {
   sale_table.remove(sale);
 }
