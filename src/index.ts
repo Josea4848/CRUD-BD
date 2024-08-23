@@ -1,12 +1,11 @@
 import exp = require("constants");
+import * as cors from "cors";
 import * as express from "express"; //framework para API
 import { AppDataSource } from "./data-source";
 import { Car } from "./entity/Car";
 import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
 import { getAllCars } from "./methods/car_methods";
-import * as cors from "cors";
-import { addSaleIdCPF } from "./methods/sale_methods";
 import { addClient, getClient } from "./methods/client_methods";
 
 // server.js

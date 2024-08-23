@@ -47,6 +47,15 @@ export async function getSalesDate(date: string, sale_table: Repository<Sale>): 
 return await sale_table.findBy({date: date})
 }
 
+//--------------------------------------- UPDATE ---------------------------------------------
+export async function updateSalePrice(car_id: number, new_price: number, sale_table: Repository<Sale>): Promise<void> {
+  if(new_price == null){
+    throw new Error("Trying to update sale price to null")
+  }else{
+    await sale_table.update(car_id, {price: new_price})
+  }
+}
+
 //--------------------------------------- DELETE ---------------------------------------------
 export async function removeSale(sale: Sale, sale_table: Repository<Sale>): Promise<void> {
   sale_table.remove(sale);
