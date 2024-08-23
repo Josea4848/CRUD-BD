@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { Client } from "../entity/Client";
 
 //----------------------------------------- CREATE ---------------------------------------------
@@ -8,7 +8,7 @@ export async function addClient(CPF: string, first_name: string, last_name: stri
     await client_table.save(client);
     return client;
   }
-  return;
+  return null;
 }
 
 //------------------------------------------ READ ---------------------------------------------
@@ -20,20 +20,20 @@ export async function getClient(CPF: string, client_table: Repository<Client>): 
   if (isCPFValid(CPF)) {
     return await client_table.findOneBy({ CPF: CPF });
   }
-  return;
+  return null;
 }
 
 export async function getClientByName(first_name: string, last_name: string, client_table: Repository<Client>): Promise<Client[]>{
   if(first_name == null){
-    return await client_table.findBy({last_name: last_name})
+    return await client_table.findBy({ last_name: ILike('%{last_name}%') })
   }else if(last_name == null){
-    return await client_table.findBy({first_name: first_name})
+    return await client_table.findBy({ first_name: ILike('%{first_name}%') })
   }else{
-    const clients = await client_table.findBy({first_name: first_name, last_name: last_name})
+    const clients = await client_table.findBy({first_name: ILike('%{first_name}%'), last_name: ILike('%{last_name}%')})
     if (clients == null) {
-      return await client_table.findBy({ first_name: first_name })
+      return await client_table.findBy({ first_name: ILike('%{first_name}%') })
     } else{
-      return clients
+      return clients;
     }
   }
 }

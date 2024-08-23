@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { Car } from "../entity/Car";
 
 //----------------------------------------- CREATE ---------------------------------------------
@@ -32,7 +32,7 @@ export async function getSoldCars(car_table: Repository<Car>): Promise<Car[]>{
 }
 
 export async function getCarsBrand(brand: string, car_table: Repository<Car>): Promise<Car[]>{
-  return await car_table.findBy({ brand: brand })
+  return await car_table.findBy({ brand: ILike('%{brand}%') })
 }
 
 export async function getCarsYear(year: number, car_table: Repository<Car>): Promise<Car[]>{
@@ -40,7 +40,7 @@ export async function getCarsYear(year: number, car_table: Repository<Car>): Pro
 }
 
 export async function getCarsModel(model: string, car_table: Repository<Car>): Promise<Car[]>{
-  return await car_table.findBy({ model: model })
+  return await car_table.findBy({ model: ILike('%{model}%') })
 }
 
 //--------------------------------------- UPDATE ---------------------------------------------
