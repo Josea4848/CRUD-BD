@@ -13,16 +13,19 @@ import {
   getClient,
   removeClientCPF,
 } from "./methods/client_methods";
+import * as multer from "multer";
 
 // server.js
 const express = require("express");
 const bodyParser = require("body-parser");
+const upload = multer();
 const app = express();
 const port: number = 8080;
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 AppDataSource.initialize()
   .then(async () => {
@@ -31,23 +34,7 @@ AppDataSource.initialize()
     const car_table = AppDataSource.getRepository(Car);
     const sale_table = AppDataSource.getRepository(Sale);
 
-    addClient("22233344488", "João", "Alves", "2004/03/04", client_table);
-    addClient("22233345488", "Akita", "Fabinho", "1995/03/03", client_table);
-    addClient("22232344488", "João", "Alves", "2004/03/04", client_table);
-    addClient("22231345488", "Akita", "Fabinho", "1995/03/03", client_table);
-    addClient("22433344488", "João", "Alves", "2004/03/04", client_table);
-    addClient("22833345488", "Akita", "Fabinho", "1995/03/03", client_table);
-    addClient("22033344488", "João", "Alves", "2004/03/04", client_table);
-    addClient("20033345488", "Akita", "Fabinho", "1995/03/03", client_table);
-    addClient("00033344488", "João", "Alves", "2004/03/04", client_table);
-    addClient("22233345478", "Akita", "Fabinho", "1995/03/03", client_table);
-    addClient("22233344477", "João", "Alves", "2004/03/04", client_table);
-    addClient("22233345466", "Akita", "Fabinho", "1995/03/03", client_table);
-    addClient("22233344444", "João", "Alves", "2004/03/04", client_table);
-    addClient("22233345411", "Akita", "Fabinho", "1995/03/03", client_table);
-    addClient("22233344455", "João", "Alves", "2004/03/04", client_table);
-    addClient("22233345433", "Akita", "Fabinho", "1995/03/03", client_table);
-
+    // --------------- Cars ---------------------
     //GET
     app.get("/cars", async (req, res) => {
       try {
@@ -89,13 +76,21 @@ AppDataSource.initialize()
     });
 
     // ------------------------- Clients --------------------------------------
-
     //create clients
-    app.post("/clients", async (req, res) => {
+    app.post("/clients", upload.none(), async (req, res) => {
       try {
-        const data = await req.body;
-        console.log(`Solitição de registro de cliente ${data}`);
-        res.status(200).json(data);
+        const client = await req.body;
+        await addClient(
+          client.CPF,
+          client.first_name,
+          client.last_name,
+          client.birthdate,
+          client_table
+        );
+
+        res
+          .status(200)
+          .json({ message: "Dados recebidos com sucesso", data: client });
       } catch (error) {
         return res.status(500).send(error.message);
       }
@@ -105,7 +100,6 @@ AppDataSource.initialize()
     app.get("/clients", async (req, res) => {
       try {
         const clients = await getAllClients(client_table);
-        console.log(clients);
         return res.status(200).json(clients);
       } catch (error) {
         return res.status(500).send(error.message);
@@ -133,6 +127,39 @@ AppDataSource.initialize()
         const client = await removeClientCPF(req.params.cpf, client_table);
         console.log(`Client (CPF: ${req.params.cpf}) was deleted`);
         res.status(200).json(client);
+      } catch (error) {
+        return res.status(500).send(error.message);
+      }
+    });
+
+    //update name by cpf
+    app.put("/clients/name/:cpf", async (req, res) => {
+      try {
+        const name = await req.body;
+        console.log(`Data: ${name}`);
+        return res.status(200).send("VASCO");
+      } catch (error) {
+        return res.status(500).send(error.message);
+      }
+    });
+
+    //update birthdate by cpf
+    app.put("/clients/date/:cpf", async (req, res) => {
+      try {
+        const date = await req.body;
+        console.log(`Data: ${date}`);
+        return res.status(200).send("VASCO");
+      } catch (error) {
+        return res.status(500).send(error.message);
+      }
+    });
+
+    //update cpf by cpf (sim isso mesmo)
+    app.put("/clients/cpf/:cpf", async (req, res) => {
+      try {
+        const cpf = await req.body;
+        console.log(`Data: ${cpf}`);
+        return res.status(200).send("VASCO");
       } catch (error) {
         return res.status(500).send(error.message);
       }
