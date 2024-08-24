@@ -12,6 +12,8 @@ import {
   getAllClients,
   getClient,
   removeClientCPF,
+  updateClientBirthdate,
+  updateClientName,
 } from "./methods/client_methods";
 import * as multer from "multer";
 
@@ -135,9 +137,19 @@ AppDataSource.initialize()
     //update name by cpf
     app.put("/clients/name/:cpf", async (req, res) => {
       try {
-        const name = await req.body;
-        console.log(`Data: ${name}`);
-        return res.status(200).send("VASCO");
+        const cpf = req.params.cpf;
+        const data = await req.body;
+        if (getClient(cpf, client_table) != null) {
+          await updateClientName(
+            cpf,
+            data.first_name,
+            data.last_name,
+            client_table
+          );
+          return res.status(200).json(data);
+        } else {
+          return res.status(200).send("Cliente não existe");
+        }
       } catch (error) {
         return res.status(500).send(error.message);
       }
@@ -146,20 +158,14 @@ AppDataSource.initialize()
     //update birthdate by cpf
     app.put("/clients/date/:cpf", async (req, res) => {
       try {
-        const date = await req.body;
-        console.log(`Data: ${date}`);
-        return res.status(200).send("VASCO");
-      } catch (error) {
-        return res.status(500).send(error.message);
-      }
-    });
-
-    //update cpf by cpf (sim isso mesmo)
-    app.put("/clients/cpf/:cpf", async (req, res) => {
-      try {
-        const cpf = await req.body;
-        console.log(`Data: ${cpf}`);
-        return res.status(200).send("VASCO");
+        const cpf = req.params.cpf;
+        const data = await req.body;
+        if (getClient(cpf, client_table) != null) {
+          await updateClientBirthdate(cpf, data.birthdate, client_table);
+          return res.status(200).json(data);
+        } else {
+          return res.status(200).send("Cliente não existe");
+        }
       } catch (error) {
         return res.status(500).send(error.message);
       }
