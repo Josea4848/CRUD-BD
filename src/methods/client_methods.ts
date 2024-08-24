@@ -104,7 +104,7 @@ export async function removeClientCPF(
 }
 
 //--------------------------------------- checks --------------------------------------------
-function isCPFValid(CPF: string): boolean {
+export function isCPFValid(CPF: string): boolean {
   if (CPF.length != 11) {
     throw new Error("Not a valid CPF");
     return false;

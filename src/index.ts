@@ -11,6 +11,7 @@ import {
   addClient,
   getAllClients,
   getClient,
+  isCPFValid,
   removeClientCPF,
   updateClientBirthdate,
   updateClientName,
@@ -139,6 +140,7 @@ AppDataSource.initialize()
       try {
         const cpf = req.params.cpf;
         const data = await req.body;
+
         if (getClient(cpf, client_table) != null) {
           await updateClientName(
             cpf,
@@ -160,10 +162,14 @@ AppDataSource.initialize()
       try {
         const cpf = req.params.cpf;
         const data = await req.body;
-        if (getClient(cpf, client_table) != null) {
+
+        if (isCPFValid(cpf) && (await getClient(cpf, client_table)) != null) {
+          console.log("Cliente atualizado");
+
           await updateClientBirthdate(cpf, data.birthdate, client_table);
           return res.status(200).json(data);
         } else {
+          console.log("Cliente não atualizado");
           return res.status(200).send("Cliente não existe");
         }
       } catch (error) {
