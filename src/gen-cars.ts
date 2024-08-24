@@ -66,3 +66,11 @@ function generateRandomClient(): Client {
 
   return new Client(CPF, first_name, last_name, birthdate);
 }
+
+function generateRandomSale(cars: Car[], clients: Client[]): Sale {
+    const randomCar = cars[getRandomInt(0, cars.length - 1)];
+    const randomClient = clients[getRandomInt(0, clients.length - 1)];
+    const randomPrice = parseFloat((Math.random() * 100000).toFixed(2));
+
+    return new Sale(randomCar.id, randomClient, randomCar, randomPrice);
+}
