@@ -8,7 +8,6 @@ import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
 import { Manager } from "./methods/manager";
 
-
 // server.js
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -31,7 +30,7 @@ AppDataSource.initialize()
     // database manager
     const db = new Manager();
 
-    // --------------- Cars ---------------------
+    // --------------- Cars BEGIN ---------------------
     //GET
     app.get("/cars", async (req, res) => {
       try {
@@ -51,9 +50,10 @@ AppDataSource.initialize()
         return res.status(500).send(error.message);
       }
     });
+    // --------------- Cars END ---------------------
 
-    //----------------- sale -------------------------
-    app.post("/sell", async (req, res) => {
+    //----------------- sale BEGIN -------------------------
+    app.post("/sales", async (req, res) => {
       //insert sale
       try {
         const data = await req.body;
@@ -73,9 +73,21 @@ AppDataSource.initialize()
     });
 
     //get all sales
-    app.get("/sell", async (req, res) => {});
+    app.get("/sales", async (req, res) => {
+      try {
+        const data = await db.sale.getAllRelation(sale_table);
 
-    // ------------------------- Clients --------------------------------------
+        console.log(`Dados enviados ${JSON.stringify(data)}`);
+
+        res.status(200).json(data);
+      } catch (error) {
+        res.status(500).send(error.message);
+      }
+    });
+
+    //----------------- sale END -------------------------
+
+    // ------------------------- Clients BEGIN --------------------------------------
     //create clients
     app.post("/clients", upload.none(), async (req, res) => {
       try {
@@ -89,7 +101,7 @@ AppDataSource.initialize()
         );
 
         res
-          .status(200)
+          .status(201)
           .json({ message: "Dados recebidos com sucesso", data: client });
       } catch (error) {
         return res.status(500).send(error.message);
@@ -124,9 +136,12 @@ AppDataSource.initialize()
     //delete client by cpf
     app.delete("/clients/:cpf", async (req, res) => {
       try {
-        const client = await db.client.removeByCPF(req.params.cpf, client_table);
+        const client = await db.client.removeByCPF(
+          req.params.cpf,
+          client_table
+        );
         console.log(`Cliente (CPF: ${req.params.cpf}) foi removido`);
-        res.status(200).json(client);
+        res.status(204).send("Deleted client");
       } catch (error) {
         return res.status(500).send(error.message);
       }
@@ -160,7 +175,7 @@ AppDataSource.initialize()
         const cpf = req.params.cpf;
         const data = await req.body;
 
-        if (await db.client.getOne(cpf, client_table) != null) {
+        if ((await db.client.getOne(cpf, client_table)) != null) {
           console.log("Cliente atualizado");
 
           await db.client.updateBirthdate(cpf, data.birthdate, client_table);
@@ -173,6 +188,7 @@ AppDataSource.initialize()
         return res.status(500).send(error.message);
       }
     });
+    // ------------------------- Clients END --------------------------------------
 
     app.listen(port, () => {
       console.log(`Rodando na porta ${port}.`);
