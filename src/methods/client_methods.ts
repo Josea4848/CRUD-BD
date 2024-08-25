@@ -23,7 +23,6 @@ export class Client_Manager{
   public async getOne(CPF: string, client_table: Repository<Client>): Promise<Client>{
     if (isCPFValid(CPF)) {
       return await client_table.findOneBy({ CPF: CPF });
-
     }
     return null;
   }

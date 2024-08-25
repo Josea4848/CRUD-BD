@@ -1,22 +1,13 @@
 import exp = require("constants");
+import * as cors from "cors";
 import * as express from "express"; //framework para API
+import * as multer from "multer";
 import { AppDataSource } from "./data-source";
 import { Car } from "./entity/Car";
 import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
-import { addCar, getAllCars, getAvailableCars } from "./methods/car_methods";
-import * as cors from "cors";
-import { addSaleIdCPF } from "./methods/sale_methods";
-import {
-  addClient,
-  getAllClients,
-  getClient,
-  isCPFValid,
-  removeClientCPF,
-  updateClientBirthdate,
-  updateClientName,
-} from "./methods/client_methods";
-import * as multer from "multer";
+import { Manager } from "./methods/manager";
+
 
 // server.js
 const express = require("express");
@@ -37,11 +28,14 @@ AppDataSource.initialize()
     const car_table = AppDataSource.getRepository(Car);
     const sale_table = AppDataSource.getRepository(Sale);
 
+    // database manager
+    const db = new Manager();
+
     // --------------- Cars ---------------------
     //GET
     app.get("/cars", async (req, res) => {
       try {
-        return res.status(200).json(await getAvailableCars(car_table));
+        return res.status(200).json(await db.car.getAvailable(car_table));
       } catch (error) {
         return res.status(500).send(error.message);
       }
@@ -64,7 +58,7 @@ AppDataSource.initialize()
       try {
         const data = await req.body;
         console.log(`Venda recebida: ${data}`);
-        await addSaleIdCPF(
+        await db.sale.addIdCPF(
           data.cpf,
           data.car_id,
           data.price,
@@ -86,7 +80,7 @@ AppDataSource.initialize()
     app.post("/clients", upload.none(), async (req, res) => {
       try {
         const client = await req.body;
-        await addClient(
+        await db.client.add(
           client.CPF,
           client.first_name,
           client.last_name,
@@ -105,7 +99,7 @@ AppDataSource.initialize()
     //Get clients
     app.get("/clients", async (req, res) => {
       try {
-        const clients = await getAllClients(client_table);
+        const clients = await db.client.getAll(client_table);
         return res.status(200).json(clients);
       } catch (error) {
         return res.status(500).send(error.message);
@@ -115,7 +109,7 @@ AppDataSource.initialize()
     //get clients by id
     app.get("/clients/:cpf", async (req, res) => {
       try {
-        const client = await getClient(req.params.cpf, client_table);
+        const client = await db.client.getOne(req.params.cpf, client_table);
         let is_client = true;
 
         if (client == null) {
@@ -130,8 +124,8 @@ AppDataSource.initialize()
     //delete client by cpf
     app.delete("/clients/:cpf", async (req, res) => {
       try {
-        const client = await removeClientCPF(req.params.cpf, client_table);
-        console.log(`Client (CPF: ${req.params.cpf}) was deleted`);
+        const client = await db.client.removeByCPF(req.params.cpf, client_table);
+        console.log(`Cliente (CPF: ${req.params.cpf}) foi removido`);
         res.status(200).json(client);
       } catch (error) {
         return res.status(500).send(error.message);
@@ -144,8 +138,8 @@ AppDataSource.initialize()
         const cpf = req.params.cpf;
         const data = await req.body;
 
-        if (getClient(cpf, client_table) != null) {
-          await updateClientName(
+        if (db.client.getOne(cpf, client_table) != null) {
+          await db.client.updateName(
             cpf,
             data.first_name,
             data.last_name,
@@ -166,10 +160,10 @@ AppDataSource.initialize()
         const cpf = req.params.cpf;
         const data = await req.body;
 
-        if (isCPFValid(cpf) && (await getClient(cpf, client_table)) != null) {
+        if (await db.client.getOne(cpf, client_table) != null) {
           console.log("Cliente atualizado");
 
-          await updateClientBirthdate(cpf, data.birthdate, client_table);
+          await db.client.updateBirthdate(cpf, data.birthdate, client_table);
           return res.status(200).json(data);
         } else {
           console.log("Cliente não atualizado");
