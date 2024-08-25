@@ -2,66 +2,77 @@ import { Repository } from "typeorm";
 import { Car } from "../entity/Car";
 import { Client } from "../entity/Client";
 import { Sale } from "../entity/Sale";
-import { getCar } from "./car_methods";
-import { getClient } from "./client_methods";
+import { Car_Manager } from "./car_methods";
+import { Client_Manager } from "./client_methods";
 
-//----------------------------------------- CREATE ---------------------------------------------
-export async function addSale( client: Client, car: Car, value: number, car_table: Repository<Car>, sale_table: Repository<Sale>): Promise<Sale> {
-  const sale = new Sale(car.id, client, car, value)
+export class Sale_Manager{
 
-  await sale_table.save(sale)
+  private car_sale: Car_Manager
+  private client_sale: Client_Manager
 
-  car_table.update(car.id, {sold: true})
-
-  return sale;
-}
-
-export async function addSaleIdCPF( client_CPF: string, car_id:number, value: number, client_table: Repository<Client>, car_table: Repository<Car>, sale_table: Repository<Sale>): Promise<Sale> {
-
-  const client = await getClient(client_CPF, client_table);
-  const car = await getCar(car_id, car_table)
-
-  const sale = new Sale(car_id, client, car, value)
-
-  await sale_table.save(sale)
-
-  car_table.update(car_id, {sold: true})
-
-  return sale;
-}
-
-//------------------------------------------ READ ---------------------------------------------
-export async function getAllSales(sale_table: Repository<Sale>): Promise<Sale[]> {
-  return await sale_table.find();
-}
-
-export async function getSale(car_id: number, sale_table: Repository<Sale>): Promise<Sale> {
-  return await sale_table.findOneBy({id: car_id})
-}
-
-export async function getClientSales(client: Client, sale_table: Repository<Sale>): Promise<Sale[]> {
-  return await sale_table.findBy({ client: client })
-}
-
-export async function getSalesDate(date: string, sale_table: Repository<Sale>): Promise<Sale[]>{
-return await sale_table.findBy({date: date})
-}
-
-//--------------------------------------- UPDATE ---------------------------------------------
-export async function updateSalePrice(car_id: number, new_price: number, sale_table: Repository<Sale>): Promise<void> {
-  if(new_price == null){
-    throw new Error("Trying to update sale price to null")
-  }else{
-    await sale_table.update(car_id, {price: new_price})
+  constructor(car: Car_Manager, client: Client_Manager){
+    this.car_sale = car;
+    this.client_sale = client;
   }
-}
 
-//--------------------------------------- DELETE ---------------------------------------------
-export async function removeSale(sale: Sale, sale_table: Repository<Sale>): Promise<void> {
-  sale_table.remove(sale);
-}
+  //----------------------------------------- CREATE ---------------------------------------------
+  public async addOne( client: Client, car: Car, value: number, car_table: Repository<Car>, sale_table: Repository<Sale>): Promise<Sale> {
+    const sale = new Sale(car.id, client, car, value)
 
-export async function removeSaleId(car_id: number, sale_table: Repository<Sale>): Promise<void> {
-  const sale = await getSale(car_id, sale_table);
-  sale_table.remove(sale);
+    await sale_table.save(sale)
+
+    car_table.update(car.id, {sold: true})
+
+    return sale;
+  }
+
+  public async addIdCPF( client_CPF: string, car_id:number, value: number, client_table: Repository<Client>, car_table: Repository<Car>, sale_table: Repository<Sale>): Promise<Sale> {
+
+    const client = await this.client_sale.getOne(client_CPF, client_table);
+    const car = await this.car_sale.getOne(car_id, car_table)
+
+    const sale = new Sale(car_id, client, car, value)
+
+    await sale_table.save(sale)
+
+    car_table.update(car_id, {sold: true})
+
+    return sale;
+  }
+
+  //------------------------------------------ READ ---------------------------------------------
+  public async getAll(sale_table: Repository<Sale>): Promise<Sale[]> {
+    return await sale_table.find();
+  }
+
+  public async getOne(car_id: number, sale_table: Repository<Sale>): Promise<Sale> {
+    return await sale_table.findOneBy({id: car_id})
+  }
+
+  public async getByClient(client: Client, sale_table: Repository<Sale>): Promise<Sale[]> {
+    return await sale_table.findBy({ client: client })
+  }
+
+  public async getByDate(date: string, sale_table: Repository<Sale>): Promise<Sale[]>{
+  return await sale_table.findBy({date: date})
+  }
+
+  //--------------------------------------- UPDATE ---------------------------------------------
+  public async updatePrice(car_id: number, new_price: number, sale_table: Repository<Sale>): Promise<void> {
+    if(new_price == null){
+      throw new Error("Trying to update sale price to null")
+    }else{
+      await sale_table.update(car_id, {price: new_price})
+    }
+  }
+
+  //--------------------------------------- DELETE ---------------------------------------------
+  public async removeOne(sale: Sale, sale_table: Repository<Sale>): Promise<void> {
+    sale_table.remove(sale);
+  }
+
+  public async removeById(car_id: number, sale_table: Repository<Sale>): Promise<void> {
+    const sale = await this.getOne(car_id, sale_table);
+    sale_table.remove(sale);
+  }
 }
