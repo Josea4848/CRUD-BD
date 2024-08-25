@@ -58,16 +58,16 @@ AppDataSource.initialize()
       }
     });
 
-    //SELL CAR BY ID -> INSERT INTO SALE TABLE AND UPDATE CAR STATUS
+    //----------------- sale -------------------------
     app.post("/sell", async (req, res) => {
-      //INSERT
+      //insert sale
       try {
         const data = await req.body;
         console.log(`Venda recebida: ${data}`);
         await addSaleIdCPF(
           data.cpf,
           data.car_id,
-          2000,
+          data.price,
           client_table,
           car_table,
           sale_table
@@ -77,6 +77,9 @@ AppDataSource.initialize()
         return res.status(500).send(error.message);
       }
     });
+
+    //get all sales
+    app.get("/sell", async (req, res) => {});
 
     // ------------------------- Clients --------------------------------------
     //create clients
