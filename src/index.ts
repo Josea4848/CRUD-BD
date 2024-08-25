@@ -188,6 +188,23 @@ AppDataSource.initialize()
         return res.status(500).send(error.message);
       }
     });
+
+    //filter clients by name
+    ///clients/filter?first_name=name&last_name=name
+    app.get("/clients/name/filter", async (req, res) => {
+      try {
+        const { first_name, last_name } = req.query;
+        const data = await db.client.getByName(
+          first_name,
+          last_name,
+          client_table
+        );
+
+        console.log(last_name);
+
+        return res.status(200).json(data);
+      } catch (error) {}
+    });
     // ------------------------- Clients END --------------------------------------
 
     app.listen(port, () => {
