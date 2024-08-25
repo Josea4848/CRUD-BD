@@ -40,12 +40,28 @@ AppDataSource.initialize()
       }
     });
 
+    //get all cars
+    app.get("/cars/all", async (req, res) => {
+      try {
+        return res.status(200).json(await db.car.getAll(car_table));
+      } catch (error) {
+        return res.status(500).send(error.message);
+      }
+    });
+
     //POST
-    app.post("/cars", async (req, res) => {
+    app.post("/cars", upload.none(), async (req, res) => {
       try {
         const data = await req.body;
-        console.log(`Data: ${JSON.stringify(data)}`);
-        res.status(201).json(data);
+        await db.car.addCar(
+          Number(data.year),
+          data.model,
+          data.maker,
+          Number(data.km),
+          car_table
+        );
+        console.log(`Data: ${data.year}`);
+        res.status(201).json(JSON.stringify(data));
       } catch (error) {
         return res.status(500).send(error.message);
       }
