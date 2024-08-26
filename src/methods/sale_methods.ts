@@ -53,28 +53,37 @@ export class Sale_Manager {
 
   //------------------------------------------ READ ---------------------------------------------
   public async getAll(sale_table: Repository<Sale>): Promise<Sale[]> {
-    return await sale_table.find({relations: {car:true, client:true }});
+    return await sale_table.find({ relations: { car: true, client: true } });
   }
 
   public async getOne(
     car_id: number,
     sale_table: Repository<Sale>
   ): Promise<Sale> {
-    return await sale_table.findOne({relations: {car: true, client: true}, where: { id: car_id }});
+    return await sale_table.findOne({
+      relations: { car: true, client: true },
+      where: { id: car_id },
+    });
   }
 
   public async getByClient(
     client: Client,
     sale_table: Repository<Sale>
   ): Promise<Sale[]> {
-    return await sale_table.find({relations: {client: true, car:true}, where: { client: client } });
+    return await sale_table.find({
+      relations: { client: true, car: true },
+      where: { client: client },
+    });
   }
 
   public async getByDate(
     date: string,
     sale_table: Repository<Sale>
   ): Promise<Sale[]> {
-    return await sale_table.find({relations: {client: true, car:true}, where: { date: date} });
+    return await sale_table.find({
+      relations: { client: true, car: true },
+      where: { date: date },
+    });
   }
 
   // public async getAllRelation(sale_table: Repository<Sale>) {
