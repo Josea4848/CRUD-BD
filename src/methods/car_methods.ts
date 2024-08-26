@@ -33,7 +33,7 @@ export class Car_Manager{
   }
 
   public async getByBrand(brand: string, car_table: Repository<Car>): Promise<Car[]>{
-  return await car_table.findBy({ brand: ILike('%{brand}%') })
+  return await car_table.findBy({ brand: ILike(`%${brand}%`) })
   }
 
   public async getByYear(year: number, car_table: Repository<Car>): Promise<Car[]>{
@@ -41,7 +41,7 @@ export class Car_Manager{
   }
 
   public async getModel(model: string, car_table: Repository<Car>): Promise<Car[]>{
-  return await car_table.findBy({ model: ILike('%{model}%') })
+  return await car_table.findBy({ model: ILike(`%${model}%`) })
   }
 
   //--------------------------------------- UPDATE ---------------------------------------------
