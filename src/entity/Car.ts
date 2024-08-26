@@ -1,4 +1,11 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Sale } from "./Sale";
 
 @Entity()
@@ -15,14 +22,14 @@ export class Car {
   @Column({
     type: "varchar",
     length: 30,
-    nullable: false
+    nullable: false,
   })
   model: string;
 
   @Column({
     type: "varchar",
     length: 30,
-    nullable: false
+    nullable: false,
   })
   brand: string;
 
@@ -34,33 +41,28 @@ export class Car {
 
   @Column({
     type: "boolean",
-    default: false
+    default: false,
   })
   sold: boolean;
 
-  @OneToOne(type => Sale, sale => sale.car)
-  sale: Sale
+  @OneToOne((type) => Sale, (sale) => sale.car)
+  sale: Sale;
 
   @BeforeInsert()
   @BeforeUpdate()
   validateKm() {
-      if (this.km < 0) {
-          throw new Error('Invalid Kilometers: Must be non-negative.');
-      }
+    if (this.km < 0) {
+      throw new Error("Invalid Kilometers: Must be non-negative.");
+    }
   }
   @BeforeInsert()
   @BeforeUpdate()
   validateYear() {
-      if (this.year < 0) {
-          throw new Error('Invalid Year: Must be non-negative.');
-      }
+    if (this.year < 0) {
+      throw new Error("Invalid Year: Must be non-negative.");
+    }
   }
-  constructor(
-    year: number,
-    model: string,
-    brand: string,
-    km: number
-  ) {
+  constructor(year: number, model: string, brand: string, km: number) {
     this.model = model;
     this.brand = brand;
     this.year = year;

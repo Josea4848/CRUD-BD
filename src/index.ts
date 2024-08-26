@@ -53,9 +53,10 @@ AppDataSource.initialize()
     app.post("/cars", upload.none(), async (req, res) => {
       try {
         const data = await req.body;
+
         await db.car.add(
           Number(data.year),
-          data.model,
+          data.model[0],
           data.maker,
           Number(data.km),
           car_table
@@ -66,6 +67,20 @@ AppDataSource.initialize()
         return res.status(500).send(error.message);
       }
     });
+
+    //Filter http://localhost:8080/cars/filter/?model=E46
+    app.get("/cars/filter", async (req, res) => {
+      try {
+        const { model } = req.query;
+
+        const data = await db.car.getModel(model, car_table);
+
+        res.status(200).json(data);
+      } catch (error) {
+        return res.status(500).send(error.message);
+      }
+    });
+
     // --------------- Cars END ---------------------
     //----------------- sale BEGIN -------------------------
     app.post("/sales", async (req, res) => {
@@ -73,10 +88,11 @@ AppDataSource.initialize()
       try {
         const data = await req.body;
         console.log(`Venda recebida: ${data}`);
+
         await db.sale.addIdCPF(
           data.cpf,
           data.car_id,
-          data.price,
+          Number(data.price),
           client_table,
           car_table,
           sale_table
@@ -99,6 +115,19 @@ AppDataSource.initialize()
         res.status(500).send(error.message);
       }
     });
+
+    // //get sales by model
+    // app.get("/sales/filter", async (req, res) => {
+    //   try {
+    //     let { model } = req.query;
+    //     const data = await db.sale.getByCarModel(model, car_table, sale_table);
+
+    //     console.log(data);
+    //     res.status(200).json();
+    //   } catch (error) {
+    //     res.status(500).send(error.message);
+    //   }
+    // });
 
     //----------------- sale END -------------------------
 
