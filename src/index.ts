@@ -53,7 +53,7 @@ AppDataSource.initialize()
     app.post("/cars", upload.none(), async (req, res) => {
       try {
         const data = await req.body;
-        await db.car.addCar(
+        await db.car.add(
           Number(data.year),
           data.model,
           data.maker,

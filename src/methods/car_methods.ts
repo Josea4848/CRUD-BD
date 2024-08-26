@@ -3,7 +3,7 @@ import { Car } from "../entity/Car";
 
 export class Car_Manager{
   //----------------------------------------- CREATE ---------------------------------------------
-  public async addCar(year: number, model: string, brand: string, km: number, car_table: Repository<Car>): Promise<Car> {
+  public async add(year: number, model: string, brand: string, km: number, car_table: Repository<Car>): Promise<Car> {
 
   if (checkYearKm(year, km)){
     const car = new Car(year, model, brand, km);

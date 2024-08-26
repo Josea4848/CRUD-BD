@@ -2,6 +2,7 @@ import { Repository } from "typeorm";
 import { Car } from "./entity/Car";
 import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
+import { Manager } from "./methods/manager";
 
 const carBrands = [
   "Toyota",
@@ -77,28 +78,25 @@ function generateRandomSale(cars: Car[], clients: Client[]): Sale {
     return new Sale(randomCar.id, randomClient, randomCar, randomPrice);
 }
 
-export async function populateDB(qtd: number, car_table: Repository<Car>, client_table: Repository<Client>, sale_table: Repository<Sale>): Promise<void>{
+export async function populateDB(qtd: number, car_table: Repository<Car>, client_table: Repository<Client>, sale_table: Repository<Sale>, db: Manager): Promise<void> {
 
   var cars: Car[] = [];
   var clients: Client[] = [];
 
-  for (var i = 0; i < qtd*2; i++){
+  for (var i = 0; i < qtd * 2; i++) {
     const car: Car = generateRandomCar();
-    await car_table.save(car);
-
+    await db.car.add(car.year, car.model, car.brand, car.km, car_table);
     const client: Client = generateRandomClient();
-    await client_table.save(client);
+    await db.client.add(client.CPF, client.first_name, client.last_name, client.birthdate, client_table);
 
     cars.push(car);
     clients.push(client);
   }
 
-  for (var j = 0; j < qtd; j++){
+  cars = await db.car.getAll(car_table);
+  clients = await db.client.getAll(client_table);
+  for (var j = 0; j < qtd; j++) {
     const sale: Sale = generateRandomSale(cars, clients);
-    await sale_table.save(sale);
+    await db.sale.addOne(sale.client, sale.car, sale.price, car_table, sale_table);
   }
-
-
-
-
 }

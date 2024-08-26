@@ -3,7 +3,7 @@ import { Car } from "../entity/Car";
 import { Client } from "../entity/Client";
 import { Sale } from "../entity/Sale";
 import { Car_Manager } from "./car_methods";
-import { Client_Manager } from "./client_methods";
+import { Client_Manager, isCPFValid } from "./client_methods";
 
 export class Sale_Manager {
   private car_sale: Car_Manager;
@@ -53,37 +53,49 @@ export class Sale_Manager {
 
   //------------------------------------------ READ ---------------------------------------------
   public async getAll(sale_table: Repository<Sale>): Promise<Sale[]> {
-    return await sale_table.find({ relations: { car: true, client: true } });
+    return await sale_table.find({relations: {car:true, client:true }});
   }
 
   public async getOne(
     car_id: number,
     sale_table: Repository<Sale>
   ): Promise<Sale> {
-    return await sale_table.findOne({
-      relations: { car: true, client: true },
-      where: { id: car_id },
-    });
+    return await sale_table.findOne({relations: {car: true, client: true}, where: { id: car_id }});
   }
 
   public async getByClient(
     client: Client,
     sale_table: Repository<Sale>
   ): Promise<Sale[]> {
-    return await sale_table.find({
-      relations: { client: true, car: true },
-      where: { client: client },
-    });
+    return await sale_table.find({relations: {client: true, car:true}, where: { client: client } });
+  }
+
+  public async getByClientCPF(CPF: string, client_table: Repository<Client>, sale_table: Repository<Sale>): Promise<Sale[]>{
+    if (isCPFValid(CPF)) {
+      const client = await this.client_sale.getOne(CPF, client_table)
+      return await sale_table.find({ relations: { client: true, car: true }, where: { client: client } });
+    }
+  }
+
+  public async getByName(first_name: string, last_name:string, client_table: Repository<Client>, sale_table: Repository<Sale>): Promise<Sale[]>{
+    const clients: Client[] = await this.client_sale.getByName(first_name, last_name, client_table);
+
+    var sales: Sale[] = [];
+
+    if (clients != null) {
+      for (var client of clients) {
+        sales.push(...await sale_table.find({ relations: { client: true, car: true }, where: { client: client } }))
+      }
+      return sales;
+    }
+    return null;
   }
 
   public async getByDate(
     date: string,
     sale_table: Repository<Sale>
   ): Promise<Sale[]> {
-    return await sale_table.find({
-      relations: { client: true, car: true },
-      where: { date: date },
-    });
+    return await sale_table.find({relations: {client: true, car:true}, where: { date: date} });
   }
 
   // public async getAllRelation(sale_table: Repository<Sale>) {
