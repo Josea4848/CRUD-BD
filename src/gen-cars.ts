@@ -1,5 +1,7 @@
+import { Repository } from "typeorm";
 import { Car } from "./entity/Car";
 import { Client } from "./entity/Client";
+import { Sale } from "./entity/Sale";
 
 const carBrands = [
   "Toyota",
@@ -28,7 +30,7 @@ function getRandomInt(min: number, max: number): number {
 
 // Function to create and save a random car
 function generateRandomCar(): Car {
-  const year = getRandomInt(1990, new Date().getFullYear()); // Random year between 1990 and the current year
+  const year = getRandomInt(1960, new Date().getFullYear()); // Random year between 1990 and the current year
   const random = getRandomInt(0, carModels.length - 1);
   const model = carModels[random];
   const brand = carBrands[random];
@@ -49,8 +51,8 @@ function generateRandomCPF(): string {
 
 // Function to generate a random birthdate (between 1950 and 2005)
 function generateRandomBirthdate(): string {
-  const start = new Date(1950, 0, 1);
-  const end = new Date(2005, 0, 1);
+  const start = new Date(1960, 0, 1);
+  const end = new Date(2024, 0, 1);
   const birthdate = new Date(
     start.getTime() + Math.random() * (end.getTime() - start.getTime())
   );
@@ -73,4 +75,30 @@ function generateRandomSale(cars: Car[], clients: Client[]): Sale {
     const randomPrice = parseFloat((Math.random() * 100000).toFixed(2));
 
     return new Sale(randomCar.id, randomClient, randomCar, randomPrice);
+}
+
+export async function populateDB(qtd: number, car_table: Repository<Car>, client_table: Repository<Client>, sale_table: Repository<Sale>): Promise<void>{
+
+  var cars: Car[] = [];
+  var clients: Client[] = [];
+
+  for (var i = 0; i < qtd*2; i++){
+    const car: Car = generateRandomCar();
+    await car_table.save(car);
+
+    const client: Client = generateRandomClient();
+    await client_table.save(client);
+
+    cars.push(car);
+    clients.push(client);
+  }
+
+  for (var j = 0; j < qtd; j++){
+    const sale: Sale = generateRandomSale(cars, clients);
+    await sale_table.save(sale);
+  }
+
+
+
+
 }
