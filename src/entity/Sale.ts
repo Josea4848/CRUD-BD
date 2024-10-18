@@ -62,8 +62,9 @@ export class Sale {
       throw new Error("Invalid Price: Must be non-negative.");
     }
   }
-  constructor(id: number, client: Client, car: Car, value: number) {
+  constructor(id: number, seller: Seller, client: Client, car: Car, value: number) {
     this.id = id;
+    this.seller = seller;
     this.client = client;
     this.car = car;
     this.price = value;

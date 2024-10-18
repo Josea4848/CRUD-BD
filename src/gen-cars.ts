@@ -2,6 +2,7 @@ import { Repository } from "typeorm";
 import { Car } from "./entity/Car";
 import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
+import { Seller } from "./entity/seller";
 import { Manager } from "./methods/manager";
 
 const carBrands = [
@@ -70,15 +71,25 @@ function generateRandomClient(): Client {
   return new Client(CPF, first_name, last_name, birthdate);
 }
 
-function generateRandomSale(cars: Car[], clients: Client[]): Sale {
-    const randomCar = cars[getRandomInt(0, cars.length - 1)];
-    const randomClient = clients[getRandomInt(0, clients.length - 1)];
-    const randomPrice = parseFloat((Math.random() * 100000).toFixed(2));
+// Modify generateRandomSale to include a seller
+function generateRandomSale(cars: Car[], clients: Client[], sellers: Seller[]): Sale {
+  const randomCar = cars[getRandomInt(0, cars.length - 1)];
+  const randomClient = clients[getRandomInt(0, clients.length - 1)];
+  const randomSeller = sellers[getRandomInt(0, sellers.length - 1)];
+  const randomPrice = parseFloat((Math.random() * 100000).toFixed(2));
 
-    return new Sale(randomCar.id, randomClient, randomCar, randomPrice);
+  return new Sale(randomCar.id, randomSeller, randomClient, randomCar, randomPrice); // Add seller to the Sale
 }
 
-export async function populateDB(qtd: number, car_table: Repository<Car>, client_table: Repository<Client>, sale_table: Repository<Sale>, db: Manager): Promise<void> {
+// Modify populateDB to handle sellers
+export async function populateDB(
+  qtd: number,
+  car_table: Repository<Car>,
+  client_table: Repository<Client>,
+  seller_table: Repository<Seller>, // Add seller table repository
+  sale_table: Repository<Sale>,
+  db: Manager
+): Promise<void> {
 
   var cars: Car[] = [];
   var clients: Client[] = [];
@@ -95,8 +106,10 @@ export async function populateDB(qtd: number, car_table: Repository<Car>, client
 
   cars = await db.car.getAll(car_table);
   clients = await db.client.getAll(client_table);
+  const sellers = await db.seller.getAll(seller_table); // Get all sellers
+
   for (var j = 0; j < qtd; j++) {
-    const sale: Sale = generateRandomSale(cars, clients);
-    await db.sale.addOne(sale.client, sale.car, sale.price, car_table, sale_table);
+    const sale: Sale = generateRandomSale(cars, clients, sellers); // Include sellers in the sale generation
+    await db.sale.addOne(sale.seller, sale.client, sale.car, sale.price, car_table, sale_table); // Save sale with seller
   }
 }

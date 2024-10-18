@@ -6,6 +6,7 @@ import { AppDataSource } from "./data-source";
 import { Car } from "./entity/Car";
 import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
+import { Seller } from "./entity/seller";
 import { Manager } from "./methods/manager";
 import { populateDB } from "./gen-cars";
 import { CarView } from "./view_entity/view";
@@ -29,11 +30,14 @@ AppDataSource.initialize()
     const client_table = AppDataSource.getRepository(Client);
     const car_table = AppDataSource.getRepository(Car);
     const sale_table = AppDataSource.getRepository(Sale);
+    const seller_table = AppDataSource.getRepository(Seller);
 
     // database manager
     const db = new Manager();
 
-    //populateDB(200, car_table, client_table, sale_table, db);
+    db.seller.add("07002233475", "jose", "alves", "10/10/2022", seller_table);
+    db.seller.add("07012233475", "joao", "neto", "10/10/1902", seller_table);
+    populateDB(20, car_table, client_table, seller_table, sale_table, db);
 
     // --------------- Cars BEGIN ---------------------
     //GET
@@ -95,9 +99,11 @@ AppDataSource.initialize()
         console.log(`Venda recebida: ${data}`);
 
         await db.sale.addIdCPF(
-          data.cpf,
+          data.seller_cpf,
+          data.client_cpf,
           data.car_id,
           Number(data.price),
+          seller_table,
           client_table,
           car_table,
           sale_table
@@ -252,7 +258,7 @@ AppDataSource.initialize()
         console.log(last_name);
 
         return res.status(200).json(data);
-      } catch (error) {}
+      } catch (error) { }
     });
     // ------------------------- Clients END --------------------------------------
 

@@ -12,7 +12,7 @@ export class Manager {
   constructor() {
     this.client = new Client_Manager();
     this.car = new Car_Manager();
-    this.sale = new Sale_Manager(this.car, this.client);
     this.seller = new Seller_Manager();
+    this.sale = new Sale_Manager(this.car, this.client, this.seller);
   }
 }

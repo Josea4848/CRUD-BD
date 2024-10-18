@@ -2,20 +2,25 @@ import { Repository } from "typeorm";
 import { Car } from "../entity/Car";
 import { Client } from "../entity/Client";
 import { Sale } from "../entity/Sale";
+import { Seller } from "../entity/seller";
 import { Car_Manager } from "./car_methods";
 import { Client_Manager, isCPFValid } from "./client_methods";
+import { Seller_Manager } from "./seller_methods";
 
 export class Sale_Manager {
   private car_sale: Car_Manager;
   private client_sale: Client_Manager;
+  private seller_sale: Seller_Manager;
 
-  constructor(car: Car_Manager, client: Client_Manager) {
+  constructor(car: Car_Manager, client: Client_Manager, seller: Seller_Manager) {
     this.car_sale = car;
     this.client_sale = client;
+    this.seller_sale = seller;
   }
 
   //----------------------------------------- CREATE ---------------------------------------------
   public async addOne(
+    seller: Seller,
     client: Client,
     car: Car,
     value: number,
@@ -26,7 +31,7 @@ export class Sale_Manager {
       return null;
     }
 
-    const sale = new Sale(car.id, client, car, value);
+    const sale = new Sale(car.id, seller, client, car, value);
 
     await sale_table.save(sale);
 
@@ -36,9 +41,11 @@ export class Sale_Manager {
   }
 
   public async addIdCPF(
+    seller_CPF: string,
     client_CPF: string,
     car_id: number,
     value: number,
+    seller_table: Repository<Seller>,
     client_table: Repository<Client>,
     car_table: Repository<Car>,
     sale_table: Repository<Sale>
@@ -47,10 +54,11 @@ export class Sale_Manager {
       return null;
     }
 
+    const seller = await this.seller_sale.getOne(seller_CPF, seller_table);
     const client = await this.client_sale.getOne(client_CPF, client_table);
     const car = await this.car_sale.getOne(car_id, car_table);
 
-    const sale = new Sale(car_id, client, car, value);
+    const sale = new Sale(car_id, seller, client, car, value);
 
     await sale_table.save(sale);
 
@@ -61,7 +69,7 @@ export class Sale_Manager {
 
   //------------------------------------------ READ ---------------------------------------------
   public async getAll(sale_table: Repository<Sale>): Promise<Sale[]> {
-    return await sale_table.find({ relations: { car: true, client: true } });
+    return await sale_table.find({ relations: { car: true, client: true, seller: true } });
   }
 
   public async getOne(
@@ -69,7 +77,7 @@ export class Sale_Manager {
     sale_table: Repository<Sale>
   ): Promise<Sale> {
     return await sale_table.findOne({
-      relations: { car: true, client: true },
+      relations: { car: true, client: true, seller: true },
       where: { id: car_id },
     });
   }
@@ -79,8 +87,17 @@ export class Sale_Manager {
     sale_table: Repository<Sale>
   ): Promise<Sale[]> {
     return await sale_table.find({
-      relations: { client: true, car: true },
+      relations: { client: true, car: true, seller: true },
       where: { client: client },
+    });
+  }
+  public async getBySeller(
+    seller: Seller,
+    sale_table: Repository<Sale>
+  ): Promise<Sale[]> {
+    return await sale_table.find({
+      relations: { client: true, car: true, seller: true },
+      where: { seller: seller },
     });
   }
 
@@ -89,7 +106,7 @@ export class Sale_Manager {
     sale_table: Repository<Sale>
   ): Promise<Sale[]> {
     return await sale_table.find({
-      relations: { client: true, car: true },
+      relations: { client: true, car: true, seller: true },
       where: { car: car },
     });
   }
@@ -102,13 +119,27 @@ export class Sale_Manager {
     if (isCPFValid(CPF)) {
       const client = await this.client_sale.getOne(CPF, client_table);
       return await sale_table.find({
-        relations: { client: true, car: true },
+        relations: { client: true, car: true, seller: true },
         where: { client: client },
       });
     }
   }
 
-  public async getByName(
+  public async getBySellerCPF(
+    CPF: string,
+    seller_table: Repository<Seller>,
+    sale_table: Repository<Sale>
+  ): Promise<Sale[]> {
+    if (isCPFValid(CPF)) {
+      const seller = await this.seller_sale.getOne(CPF, seller_table);
+      return await sale_table.find({
+        relations: { client: true, car: true, seller: true },
+        where: { seller: seller },
+      });
+    }
+  }
+
+  public async getByClientName(
     first_name: string,
     last_name: string,
     client_table: Repository<Client>,
@@ -130,7 +161,28 @@ export class Sale_Manager {
     }
     return null;
   }
+  public async getBySellerName(
+    first_name: string,
+    last_name: string,
+    seller_table: Repository<Seller>,
+    sale_table: Repository<Sale>
+  ): Promise<Sale[]> {
+    const sellers: Seller[] = await this.seller_sale.getByName(
+      first_name,
+      last_name,
+      seller_table
+    );
 
+    var sales: Sale[] = [];
+
+    if (sellers != null) {
+      for (var seller of sellers) {
+        sales.push(...(await this.getBySeller(seller, sale_table)));
+      }
+      return sales;
+    }
+    return null;
+  }
   public async getByCarBrand(
     brand: string,
     car_table: Repository<Car>,
@@ -149,42 +201,15 @@ export class Sale_Manager {
     return null;
   }
 
-  // public async getByCarModel(
-  //   model: string,
-  //   car_table: Repository<Car>,
-  //   sale_table: Repository<Sale>
-  // ): Promise<Sale[]> {
-  //   const cars: Car[] = await this.car_sale.getModel(model, car_table);
-
-  //   let sales: Sale[] = [];
-
-  //   if (cars != null) {
-  //     for (let car of cars) {
-  //       sales.push(...(await this.getByCar(car, sale_table)));
-  //     }
-  //   }
-
-  //   return sales;
-  // }
-
   public async getByDate(
     date: string,
     sale_table: Repository<Sale>
   ): Promise<Sale[]> {
     return await sale_table.find({
-      relations: { client: true, car: true },
+      relations: { client: true, car: true, seller: true },
       where: { date: date },
     });
   }
-
-  // public async getAllRelation(sale_table: Repository<Sale>) {
-  //   return await sale_table
-  //     .createQueryBuilder("sale")
-  //     .leftJoin("sale.client", "client")
-  //     .leftJoin("sale.car", "car")
-  //     .select(["sale", "client", "car"])
-  //     .getMany();
-  // }
 
   //--------------------------------------- UPDATE ---------------------------------------------
   public async updatePrice(
