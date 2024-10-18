@@ -149,23 +149,23 @@ export class Sale_Manager {
     return null;
   }
 
-  public async getByCarModel(
-    model: string,
-    car_table: Repository<Car>,
-    sale_table: Repository<Sale>
-  ) {
-    const cars: Car[] = await this.car_sale.getModel(model, car_table);
+  // public async getByCarModel(
+  //   model: string,
+  //   car_table: Repository<Car>,
+  //   sale_table: Repository<Sale>
+  // ): Promise<Sale[]> {
+  //   const cars: Car[] = await this.car_sale.getModel(model, car_table);
 
-    let sales: Sale[] = [];
+  //   let sales: Sale[] = [];
 
-    if (cars != null) {
-      for (let car of cars) {
-        sales.push(...(await this.getByCar(car, sale_table)));
-      }
-      return sales;
-    }
-    return null;
-  }
+  //   if (cars != null) {
+  //     for (let car of cars) {
+  //       sales.push(...(await this.getByCar(car, sale_table)));
+  //     }
+  //   }
+
+  //   return sales;
+  // }
 
   public async getByDate(
     date: string,

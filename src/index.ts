@@ -7,6 +7,9 @@ import { Car } from "./entity/Car";
 import { Client } from "./entity/Client";
 import { Sale } from "./entity/Sale";
 import { Manager } from "./methods/manager";
+import { populateDB } from "./gen-cars";
+import { CarView } from "./view_entity/view";
+import { DataSource } from "typeorm";
 
 // server.js
 const express = require("express");
@@ -29,6 +32,8 @@ AppDataSource.initialize()
 
     // database manager
     const db = new Manager();
+
+    //populateDB(200, car_table, client_table, sale_table, db);
 
     // --------------- Cars BEGIN ---------------------
     //GET
@@ -250,6 +255,12 @@ AppDataSource.initialize()
       } catch (error) {}
     });
     // ------------------------- Clients END --------------------------------------
+
+    app.get("/teste", async (req, res) => {
+      const data = await AppDataSource.manager.find(CarView);
+
+      return res.status(200).json(data);
+    });
 
     app.listen(port, () => {
       console.log(`Rodando na porta ${port}.`);
