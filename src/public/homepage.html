@@ -13,26 +13,47 @@
       <div class="container">
         <nav id="menu">
           <a href="venda.html"
-            ><img src="icons/sales.svg" alt="Sales icon"
-          /></a>
-          <a href="clientes.html"
-            ><img src="icons/users.svg" alt="Clients"
-          /></a>
-          <a href="historico.html"
-            ><img src="icons/history.svg" alt="Sales history"
-          /></a>
-          <a href="carros.html"><img src="icons/cars.svg" alt="Cars" /></a>
+            ><div id="icon-menu">
+              <img src="icons/sales.svg" alt="Sales icon"
+          />
+          <p>Vender carro</p>
+            </div></a>
+
+          <a href="clientes.html">
+            <div id="icon-menu">
+              <img src="icons/users.svg" alt="Clients"/>
+              <p>Clientes</p>
+            </div>
+          </a>
+
+          <a href="historico.html">
+            <div id="icon-menu">
+              <img src="icons/history.svg" alt="Sales history"
+            />
+            <p>Vendas</p>
+            </div >
+          </a>
+          
+          <a href="carros.html">
+            <div id="icon-menu">
+              <img src="icons/cars.svg" alt="Cars" />
+          <p>Carros</p>
+            </div>
+          </a>
           <!-- Área do Usuário Logado -->
-        <div id="user-info" class="hidden">
-          <button onclick="logout()" id="logout-btn"></button>
-        </div>
+        <a id="user-info">
+          <div id="icon-menu">
+            <img src="icons/logout.svg" alt="">
+            <p>Sair</p>
+          </div>  
+        </a>
         </nav>
       </div>
 
 
        <!-- Formulário de Login -->
        <div id="login-container" class="container hidden">
-        <h2>Login de funcionários</h2>
+        <h2 style="color: rgb(75, 75, 75); margin: 5px;">Login de funcionários</h2>
         <input type="text" id="username" placeholder="Insira seu CPF" />
         <input type="password" id="password" placeholder="Senha" />
         <button onclick="login()">Entrar</button>

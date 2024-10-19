@@ -68,5 +68,6 @@ function logout() {
   showLogin();
 }
 
+document.getElementById("user-info").addEventListener("click", logout);
 document.getElementById("menu").style.display = "none";
 document.getElementById("user-info").style.display = "none";
