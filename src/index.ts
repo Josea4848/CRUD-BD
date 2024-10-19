@@ -106,6 +106,21 @@ AppDataSource.initialize()
 
     // --------------- Cars END ---------------------
     //----------------- sale BEGIN -------------------------
+    //get sales by client
+    app.get("/sales/:cpf", async (req, res) => {
+      try {
+        const data = await db.sale.getByClientCPF(
+          req.params.cpf,
+          client_table,
+          sale_table
+        );
+
+        res.status(201).json(data);
+      } catch (error) {
+        return res.status(500).send(error.message);
+      }
+    });
+
     app.post("/sales", async (req, res) => {
       //insert sale
       try {
