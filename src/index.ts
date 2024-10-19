@@ -166,6 +166,7 @@ AppDataSource.initialize()
           client.first_name,
           client.last_name,
           client.birthdate,
+          client.is_flamengo,
           client_table
         );
 

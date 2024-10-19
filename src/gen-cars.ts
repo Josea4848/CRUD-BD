@@ -67,8 +67,9 @@ function generateRandomClient(): Client {
   const first_name = firstNames[Math.floor(Math.random() * firstNames.length)];
   const last_name = lastNames[Math.floor(Math.random() * lastNames.length)];
   const birthdate = generateRandomBirthdate();
+  const is_flamengo = Boolean(Math.round(Math.random()));
 
-  return new Client(CPF, first_name, last_name, birthdate);
+  return new Client(CPF, first_name, last_name, birthdate, is_flamengo);
 }
 
 // Modify generateRandomSale to include a seller
@@ -112,6 +113,7 @@ export async function populateDB(
       client.first_name,
       client.last_name,
       client.birthdate,
+      client.is_flamengo,
       client_table
     );
 

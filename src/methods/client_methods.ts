@@ -8,10 +8,17 @@ export class Client_Manager {
     first_name: string,
     last_name: string,
     birthdate: string,
+    is_flamengo: boolean,
     client_table: Repository<Client>
   ): Promise<Client> {
     if (isCPFValid(CPF)) {
-      const client = new Client(CPF, first_name, last_name, birthdate);
+      const client = new Client(
+        CPF,
+        first_name,
+        last_name,
+        birthdate,
+        is_flamengo
+      );
       await client_table.save(client);
       return client;
     }
