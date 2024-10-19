@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Venda e aluguel de veículos</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/menu.css" />
+    <script src="js/login.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <nav id="menu">
+          <a href="venda.html"
+            ><img src="icons/sales.svg" alt="Sales icon"
+          /></a>
+          <a href="clientes.html"
+            ><img src="icons/users.svg" alt="Clients"
+          /></a>
+          <a href="historico.html"
+            ><img src="icons/history.svg" alt="Sales history"
+          /></a>
+          <a href="carros.html"><img src="icons/cars.svg" alt="Cars" /></a>
+          <!-- Área do Usuário Logado -->
+        <div id="user-info" class="hidden">
+          <button onclick="logout()" id="logout-btn"></button>
+        </div>
+        </nav>
+      </div>
+
+
+       <!-- Formulário de Login -->
+       <div id="login-container" class="container hidden">
+        <h2>Login de funcionários</h2>
+        <input type="text" id="username" placeholder="Insira seu CPF" />
+        <input type="password" id="password" placeholder="Senha" />
+        <button onclick="login()">Entrar</button>
+      </div>
+
+      
+    </div>
+
+    </main>
+  </body>
+</html>

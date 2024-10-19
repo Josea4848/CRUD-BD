@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendas</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/sale.css" />
+    <link rel="stylesheet" href="css/saleHist.css" />
+    <script src="js/clients_page.js" defer></script>
+  </head>
+  <body>
+    <header class="container">
+      <a
+        class="homepage-ancor"
+        href="#"
+        style="font-size: 1.5rem; color: rgb(65, 65, 65); font-weight: bold"
+      >
+        Para clientes
+      </a>
+    </header>
+
+    <main class="container">
+      <div id="cars_block" class="block">
+        <div id="client">
+          <form>
+            <label for="cpf">CPF do cliente:</label>
+            <input
+              type="text"
+              id="cpf"
+              required
+              maxlength="11"
+              minlength="11"
+            />
+
+            <div class="msg-error" id="msg-error">
+              <small>CPF inválido ou cliente não registrado</small>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                color="#f06161"
+                fill="none"
+              >
+                <path
+                  d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M12.2422 17V12C12.2422 11.5286 12.2422 11.2929 12.0957 11.1464C11.9493 11 11.7136 11 11.2422 11"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M11.992 8H12.001"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <button onclick="getSales()" id="sales-btn">
+              Buscar compras realizadas
+            </button>
+          </form>
+        </div>
+
+        <div id="top-block">
+          <div>
+            <p id="sales">Quantidade de compras: 0</p>
+            <p id="value">Valor total: R$</p>
+          </div>
+        </div>
+        <ul id="sales-list"></ul>
+      </div>
+    </main>
+  </body>
+</html>

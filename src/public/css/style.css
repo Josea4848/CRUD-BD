@@ -1,0 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+* {
+  text-decoration: none;
+  margin: 0 0;
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+
+body {
+  height: 100vh;
+  background: rgb(143, 44, 0);
+  background: linear-gradient(
+    7deg,
+    rgba(143, 44, 0, 1) 17%,
+    rgba(255, 153, 14, 1) 76%
+  );
+  overflow: hidden;
+}
+
+main {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 92%;
+}
+
+.container {
+  justify-content: center;
+}
+
+header {
+  background-color: transparent;
+  height: 8%;
+  padding: 8px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+}
+
+.block {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  height: 500px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0px 0px rgba(0, 0, 0, 0.4);
+}
+
+input {
+  border-radius: 5px;
+  appearance: none;
+  outline: none;
+  border: none;
+  background-color: rgb(192, 192, 192);
+}
+
+.msg-error {
+  font-size: 1rem;
+  color: rgb(240, 97, 97);
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.msg-error > svg {
+  padding-left: 2px;
+}
+
+.homepage-ancor {
+  background-color: transparent;
+}
+
+.btn {
+  all: unset;
+  padding: 8px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  transition: 0 s;
+}

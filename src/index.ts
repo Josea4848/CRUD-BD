@@ -13,6 +13,7 @@ import { CarView } from "./view_entity/view";
 import { DataSource } from "typeorm";
 
 // server.js
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const upload = multer();
@@ -23,6 +24,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+// Usando o middleware CORS
+app.use(
+  cors({
+    origin: "https://example.com/", // ou '*' para permitir todos
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // se precisar enviar cookies
+  })
+);
 
 AppDataSource.initialize()
   .then(async () => {
@@ -52,6 +62,16 @@ AppDataSource.initialize()
       seller_table
     );
     populateDB(20, car_table, client_table, seller_table, sale_table, db);
+
+    app.use(express.static(path.join(__dirname, "public")));
+
+    app.get("/", (req, res) => {
+      res.sendFile(path.join(__dirname, "public", "homepage.html"));
+    });
+
+    app.get("/cliente", (req, res) => {
+      res.sendFile(path.join(__dirname, "public", "clientPage.html"));
+    });
 
     // --------------- Cars BEGIN ---------------------
     //GET
