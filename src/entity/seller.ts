@@ -30,6 +30,14 @@ export class Seller {
   })
   birthdate: string;
 
+  @Column({
+    type: "varchar",
+    length: 60, // Ajuste o tamanho conforme necessário
+    nullable: false,
+    default: "dsjkdjs",
+  })
+  password: string; // Campo para armazenar a senha hash
+
   @OneToMany((type) => Sale, (sale) => sale.seller)
   sales: Sale[];
 
@@ -37,11 +45,13 @@ export class Seller {
     CPF: string,
     first_name: string,
     last_name: string,
-    birthdate: string
+    birthdate: string,
+    password: string
   ) {
     this.CPF = CPF;
     this.first_name = first_name;
     this.last_name = last_name;
     this.birthdate = birthdate;
+    this.password = password;
   }
 }

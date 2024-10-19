@@ -72,13 +72,23 @@ function generateRandomClient(): Client {
 }
 
 // Modify generateRandomSale to include a seller
-function generateRandomSale(cars: Car[], clients: Client[], sellers: Seller[]): Sale {
+function generateRandomSale(
+  cars: Car[],
+  clients: Client[],
+  sellers: Seller[]
+): Sale {
   const randomCar = cars[getRandomInt(0, cars.length - 1)];
   const randomClient = clients[getRandomInt(0, clients.length - 1)];
   const randomSeller = sellers[getRandomInt(0, sellers.length - 1)];
   const randomPrice = parseFloat((Math.random() * 100000).toFixed(2));
 
-  return new Sale(randomCar.id, randomSeller, randomClient, randomCar, randomPrice); // Add seller to the Sale
+  return new Sale(
+    randomCar.id,
+    randomSeller,
+    randomClient,
+    randomCar,
+    randomPrice
+  ); // Add seller to the Sale
 }
 
 // Modify populateDB to handle sellers
@@ -90,7 +100,6 @@ export async function populateDB(
   sale_table: Repository<Sale>,
   db: Manager
 ): Promise<void> {
-
   var cars: Car[] = [];
   var clients: Client[] = [];
 
@@ -98,7 +107,13 @@ export async function populateDB(
     const car: Car = generateRandomCar();
     await db.car.add(car.year, car.model, car.brand, car.km, car_table);
     const client: Client = generateRandomClient();
-    await db.client.add(client.CPF, client.first_name, client.last_name, client.birthdate, client_table);
+    await db.client.add(
+      client.CPF,
+      client.first_name,
+      client.last_name,
+      client.birthdate,
+      client_table
+    );
 
     cars.push(car);
     clients.push(client);
@@ -110,6 +125,13 @@ export async function populateDB(
 
   for (var j = 0; j < qtd; j++) {
     const sale: Sale = generateRandomSale(cars, clients, sellers); // Include sellers in the sale generation
-    await db.sale.addOne(sale.seller, sale.client, sale.car, sale.price, car_table, sale_table); // Save sale with seller
+    await db.sale.addOne(
+      sale.seller,
+      sale.client,
+      sale.car,
+      sale.price,
+      car_table,
+      sale_table
+    ); // Save sale with seller
   }
 }

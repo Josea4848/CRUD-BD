@@ -1,6 +1,6 @@
 import exp = require("constants");
 import * as cors from "cors";
-import * as express from "express"; //framework para API
+//import * as express from "express"; //framework para API
 import * as multer from "multer";
 import { AppDataSource } from "./data-source";
 import { Car } from "./entity/Car";
@@ -35,8 +35,22 @@ AppDataSource.initialize()
     // database manager
     const db = new Manager();
 
-    db.seller.add("07002233475", "jose", "alves", "10/10/2022", seller_table);
-    db.seller.add("07012233475", "joao", "neto", "10/10/1902", seller_table);
+    db.seller.add(
+      "07002233475",
+      "jose",
+      "alves",
+      "10/10/2022",
+      "juca123",
+      seller_table
+    );
+    db.seller.add(
+      "07012233475",
+      "joao",
+      "neto",
+      "10/10/1902",
+      "dslldjs",
+      seller_table
+    );
     populateDB(20, car_table, client_table, seller_table, sale_table, db);
 
     // --------------- Cars BEGIN ---------------------
@@ -96,11 +110,11 @@ AppDataSource.initialize()
       //insert sale
       try {
         const data = await req.body;
-        console.log(`Venda recebida: ${data}`);
+        console.log(`Venda recebida: ${JSON.stringify(data)}`);
 
         await db.sale.addIdCPF(
-          data.seller_cpf,
-          data.client_cpf,
+          data.cpf_seller,
+          data.cpf,
           data.car_id,
           Number(data.price),
           seller_table,
@@ -258,9 +272,42 @@ AppDataSource.initialize()
         console.log(last_name);
 
         return res.status(200).json(data);
-      } catch (error) { }
+      } catch (error) {}
     });
     // ------------------------- Clients END --------------------------------------
+
+    // ------------------------- Seller BEGIN ------------------------------------
+    // Rota de login para vendedores
+    app.post("/login", async (req, res) => {
+      const { cpf, password } = req.body;
+
+      console.log(cpf);
+      console.log(password);
+      try {
+        // Verifica se o vendedor existe
+        const seller = await db.seller.getOne(cpf, seller_table);
+
+        if (!seller) {
+          return res.status(401).json({ message: "Vendedor não encontrado." });
+        }
+
+        // Verifica a senha
+        const isPasswordValid = await db.seller.login(
+          cpf,
+          password,
+          seller_table
+        );
+
+        if (isPasswordValid) {
+          return res.status(200).json({ message: "Login bem-sucedido." });
+        } else {
+          return res.status(401).json({ message: "Senha inválida." });
+        }
+      } catch (error) {
+        return res.status(500).send(error.message);
+      }
+    });
+    // ------------------------- Seller END --------------------------------------
 
     app.get("/teste", async (req, res) => {
       const data = await AppDataSource.manager.find(CarView);
