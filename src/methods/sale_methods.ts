@@ -12,7 +12,11 @@ export class Sale_Manager {
   private client_sale: Client_Manager;
   private seller_sale: Seller_Manager;
 
-  constructor(car: Car_Manager, client: Client_Manager, seller: Seller_Manager) {
+  constructor(
+    car: Car_Manager,
+    client: Client_Manager,
+    seller: Seller_Manager
+  ) {
     this.car_sale = car;
     this.client_sale = client;
     this.seller_sale = seller;
@@ -29,6 +33,11 @@ export class Sale_Manager {
   ): Promise<Sale> {
     if (typeof value !== "number" || isNaN(value)) {
       return null;
+    }
+
+    //recebe desconto se for flamenguista :(
+    if (client.is_flamengo) {
+      value = value * 0.8;
     }
 
     const sale = new Sale(car.id, seller, client, car, value);
@@ -58,6 +67,11 @@ export class Sale_Manager {
     const client = await this.client_sale.getOne(client_CPF, client_table);
     const car = await this.car_sale.getOne(car_id, car_table);
 
+    //recebe desconto se for flamenguista :(
+    if (client.is_flamengo) {
+      value = value * 0.8;
+    }
+
     const sale = new Sale(car_id, seller, client, car, value);
 
     await sale_table.save(sale);
@@ -69,7 +83,9 @@ export class Sale_Manager {
 
   //------------------------------------------ READ ---------------------------------------------
   public async getAll(sale_table: Repository<Sale>): Promise<Sale[]> {
-    return await sale_table.find({ relations: { car: true, client: true, seller: true } });
+    return await sale_table.find({
+      relations: { car: true, client: true, seller: true },
+    });
   }
 
   public async getOne(
