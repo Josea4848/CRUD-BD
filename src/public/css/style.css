@@ -53,11 +53,11 @@ header {
 }
 
 input {
-  border-radius: 5px;
+  /* border-radius: 5px;
   appearance: none;
   outline: none;
   border: none;
-  background-color: rgb(192, 192, 192);
+  background-color: rgb(192, 192, 192); */
 }
 
 .msg-error {
